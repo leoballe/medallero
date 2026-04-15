@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar registro - Medallero App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        .contenedor {
+            max-width: 900px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #1f3c88;
+        }
+
+        p {
+            color: #555;
+        }
+
+        .campo {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 18px;
+        }
+
+        .formulario-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(280px, 1fr));
+            gap: 20px;
+            align-items: end;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input, select {
+            padding: 10px;
+            border: 1px solid #cfcfcf;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .fila-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-height: 42px;
+        }
+
+        .acciones-formulario {
+            margin-top: 25px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .boton {
+            background: #1f3c88;
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .boton:hover {
+            background: #16306d;
+        }
+
+        .boton-secundario {
+            background: #6c757d;
+        }
+
+        .boton-secundario:hover {
+            background: #565e64;
+        }
+
+        .flash {
+            margin-bottom: 20px;
+            padding: 12px 14px;
+            background: #fff3cd;
+            border: 1px solid #ffe69c;
+            color: #664d03;
+            border-radius: 6px;
+        }
+
+        @media (max-width: 768px) {
+            .formulario-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="contenedor">
+        <h1>Editar registro</h1>
+        <p>Modificá los datos del registro seleccionado.</p>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form action="/actualizar/{{ registro.id }}" method="POST">
+            <div class="formulario-grid">
+                <div class="campo">
+                    <label for="evento">Evento</label>
+                    <select id="evento" name="evento">
+                        <option value="">Seleccionar</option>
+                        {% for item in eventos %}
+                            <option value="{{ item['name'] }}" {% if registro.evento == item['name'] %}selected{% endif %}>{{ item['name'] }}</option>
+                        {% endfor %}
+                       
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="disciplina">Disciplina</label>
+                    <select id="disciplina" name="disciplina">
+                        <option value="">Seleccionar</option>
+                        {% for item in disciplinas %}
+                            <option value="{{ item['name'] }}" {% if registro.disciplina == item['name'] %}selected{% endif %}>{{ item['name'] }}</option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="prueba">Prueba</label>
+                    <select id="prueba" name="prueba">
+                        <option value="">Seleccionar</option>
+                        {% for item in pruebas %}
+                            <option value="{{ item['name'] }}" {% if registro.prueba == item['name'] %}selected{% endif %}>{{ item['name'] }}</option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="genero">Género</label>
+                    <select id="genero" name="genero">
+                        <option value="">Seleccionar</option>
+                        {% for item in generos %}
+                            <option value="{{ item['name'] }}" {% if registro.genero == item['name'] %}selected{% endif %}>{{ item['name'] }}</option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="categoria">Categoria</label>
+                    <select id="categoria" name="categoria">
+                        <option value="">Seleccionar</option>
+                        {% for item in categorias %}
+                            <option value="{{ item['name'] }}" {% if registro.categoria == item['name'] %}selected{% endif %}>{{ item['name'] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="adaptado_checkbox">Es adaptado</label>
+                    <div class="fila-checkbox">
+                        <input type="checkbox" id="adaptado_checkbox" name="adaptado" value="Sí" style="width: 18px; height: 18px;" {% if registro.adaptado == 'Sí' %}checked{% endif %}>
+                        <span>Marcar si es adaptado</span>
+                    </div>
+                </div>
+
+                <div class="campo" id="clase-container" style="display: none;">
+                    <label for="clase">Clase</label>
+                    <select id="clase" name="clase">
+                        <option value="">Seleccionar</option>
+                        {% for item in clases %}
+                            <option value="{{ item['name'] }}" {% if registro.clase == item['name'] %}selected{% endif %}>{{ item['name'] }}</option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="provincia">Provincia</label>
+                    <select id="provincia" name="provincia">
+                        <option value="">Seleccionar provincia</option>
+                        {% for item in provincias %}
+                            <option value="{{ item['name'] }}" {% if registro.provincia == item['name'] %}selected{% endif %}>{{ item['name'] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="medalla">Medalla</label>
+                    <select id="medalla" name="medalla">
+                        <option value="">Seleccionar</option>
+                        <option value="oro" {% if registro.medalla == 'oro' %}selected{% endif %}>Oro</option>
+                        <option value="plata" {% if registro.medalla == 'plata' %}selected{% endif %}>Plata</option>
+                        <option value="bronce" {% if registro.medalla == 'bronce' %}selected{% endif %}>Bronce</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="acciones-formulario">
+                <button type="submit" class="boton">Guardar cambios</button>
+                <a href="/" class="boton boton-secundario">Cancelar</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const RELACIONES_EVENTO_DISCIPLINA = {{ relaciones_evento_disciplina | tojson }};
+        const RELACIONES_DISCIPLINA_PRUEBA = {{ relaciones_disciplina_prueba | tojson }};
+    </script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

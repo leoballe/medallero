@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración de catálogos - Medallero App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .contenedor {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #1f3c88;
+        }
+
+        h2 {
+            margin: 0;
+            color: #333;
+        }
+
+        .acciones {
+            margin-bottom: 20px;
+        }
+
+        .boton-volver {
+            display: inline-block;
+            background: #6c757d;
+            color: white;
+            text-decoration: none;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .boton-volver:hover {
+            background: #565e64;
+        }
+
+        .tabla-wrap {
+            overflow-x: auto;
+            margin-top: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+
+        th, td {
+            border: 1px solid #d9dee3;
+            padding: 10px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background: #eef3f8;
+        }
+
+        .estado-activo {
+            color: #198754;
+            font-weight: bold;
+        }
+
+        .estado-inactivo {
+            color: #c62828;
+            font-weight: bold;
+        }
+
+        .boton-estado {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            margin-right: 6px;
+            margin-bottom: 4px;
+        }
+
+        .boton-activar {
+            background: #198754;
+            color: white;
+        }
+
+        .boton-activar:hover {
+            background: #146c43;
+        }
+
+        .boton-editar {
+            background: #1f3c88;
+            color: white;
+        }
+
+        .boton-editar:hover {
+            background: #16306d;
+        }
+
+        .boton-desactivar {
+            background: #c62828;
+            color: white;
+        }
+
+        .boton-desactivar:hover {
+            background: #9f1f1f;
+        }
+
+        .boton-secundario {
+            background: #6c757d;
+            color: white;
+        }
+
+        .boton-secundario:hover {
+            background: #565e64;
+        }
+
+        .form-alta-catalogo {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f8fafc;
+            border: 1px solid #d9dee3;
+            border-radius: 8px;
+        }
+
+        .form-alta-grid {
+            display: grid;
+            grid-template-columns: 220px 1fr auto;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .form-alta-catalogo label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-alta-catalogo input,
+        .form-alta-catalogo select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #cfcfcf;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .boton-guardar-catalogo {
+            background: #198754;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .boton-guardar-catalogo:hover {
+            background: #146c43;
+        }
+
+        .form-importar-catalogo {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8fafc;
+            border: 1px solid #d9dee3;
+            border-radius: 8px;
+        }
+
+        .form-importar-grid {
+            display: grid;
+            grid-template-columns: 220px 1fr auto;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .form-importar-catalogo label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-importar-catalogo input,
+        .form-importar-catalogo select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #cfcfcf;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .boton-importar-catalogo {
+            background: #1f3c88;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .boton-importar-catalogo:hover {
+            background: #16306d;
+        }
+
+        .form-relacion-catalogo {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f8fafc;
+            border: 1px solid #d9dee3;
+            border-radius: 8px;
+        }
+
+        .form-relacion-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .form-relacion-catalogo label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-relacion-catalogo select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid #cfcfcf;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .boton-relacion {
+            background: #1f3c88;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .boton-relacion:hover {
+            background: #16306d;
+        }
+
+        .flash {
+            margin: 15px 0 20px 0;
+            padding: 12px 14px;
+            background: #fff3cd;
+            border: 1px solid #ffe69c;
+            color: #664d03;
+            border-radius: 6px;
+        }
+
+        .seccion-catalogo {
+            margin-top: 35px;
+        }
+
+        .seccion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .seccion-acciones {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .col-check {
+            width: 44px;
+            text-align: center;
+        }
+
+        .col-check input[type="checkbox"] {
+            transform: scale(1.15);
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .form-alta-grid,
+            .form-importar-grid,
+            .form-relacion-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .seccion-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="contenedor">
+        <h1>Administración de catálogos</h1>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="acciones">
+            <a href="/" class="boton-volver">Volver al inicio</a>
+        </div>
+
+        <div class="form-alta-catalogo">
+            <form action="/catalogos/agregar" method="POST">
+                <div class="form-alta-grid">
+                    <div>
+                        <label for="tipo_catalogo">Catálogo</label>
+                        <select id="tipo_catalogo" name="tipo_catalogo" required>
+                            <option value="">Seleccionar</option>
+                            <option value="eventos">Eventos</option>
+                            <option value="disciplinas">Disciplinas</option>
+                            <option value="generos">Géneros</option>
+                            <option value="pruebas">Pruebas</option>
+                            <option value="categorias">Categorías</option>
+                            <option value="clases">Clases</option>
+                            <option value="provincias">Provincias</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="nombre_nuevo">Nuevo valor</label>
+                        <input type="text" id="nombre_nuevo" name="nombre_nuevo" placeholder="Escribí el nombre nuevo" required>
+                    </div>
+
+                    <div>
+                        <button type="submit" class="boton-guardar-catalogo">Agregar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="form-importar-catalogo">
+            <form action="/catalogos/importar_csv" method="POST" enctype="multipart/form-data">
+                <div class="form-importar-grid">
+                    <div>
+                        <label for="tipo_catalogo_csv">Catálogo para importar</label>
+                        <select id="tipo_catalogo_csv" name="tipo_catalogo_csv" required>
+                            <option value="">Seleccionar</option>
+                            <option value="eventos">Eventos</option>
+                            <option value="disciplinas">Disciplinas</option>
+                            <option value="generos">Géneros</option>
+                            <option value="pruebas">Pruebas</option>
+                            <option value="categorias">Categorías</option>
+                            <option value="clases">Clases</option>
+                            <option value="provincias">Provincias</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="archivo_csv">Archivo CSV</label>
+                        <input type="file" id="archivo_csv" name="archivo_csv" accept=".csv" required>
+                    </div>
+
+                    <div>
+                        <button type="submit" class="boton-importar-catalogo">Importar CSV</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Eventos -->
+        <div class="seccion-catalogo">
+            <div class="seccion-header">
+                <h2>Eventos</h2>
+                <div class="seccion-acciones">
+                    <button type="button" class="boton-estado boton-secundario" onclick="setSeleccionGrupo('eventos', true)">Seleccionar todo</button>
+                    <button type="button" class="boton-estado boton-secundario" onclick="setSeleccionGrupo('eventos', false)">Deseleccionar todo</button>
+                    <button type="submit" form="form-eventos" class="boton-estado boton-desactivar" onclick="return confirmarEliminacionGrupo('eventos', 'elemento(s) de Eventos');">Borrar seleccionados</button>
+                </div>
+            </div>
+            <div class="tabla-wrap">
+                <form id="form-eventos" action="/catalogos/eliminar_seleccionados/eventos" method="POST">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="col-check"><input type="checkbox" onclick="setSeleccionGrupo('eventos', this.checked)"></th>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in eventos %}
+                            <tr>
+                                <td class="col-check"><input type="checkbox" name="ids" value="{{ item.id }}" data-group="eventos"></td>
+                                <td>{{ item.id }}</td>
+                                <td>{{ item.name }}</td>
+                                <td>{% if item.active == 1 %}<span class="estado-activo">Activo</span>{% else %}<span class="estado-inactivo">Inactivo</span>{% endif %}</td>
+                                <td>
+                                    <a href="/catalogos/editar/eventos/{{ item.id }}" class="boton-estado boton-editar">Editar</a>
+                                    <form action="/catalogos/eliminar/eventos/{{ item.id }}" method="POST" style="display:inline;" onsubmit="guardarScrollCatalogos(); return confirm('¿Seguro que querés eliminar este elemento?');">
+                                        <button type="submit" class="boton-estado boton-desactivar">Eliminar</button>
+                                    </form>
+                                    {% if item.active == 1 %}
+                                        <form action="/catalogos/toggle/eventos/{{ item.id }}" method="POST" style="display:inline;" onsubmit="guardarScrollCatalogos();">
+                                            <button type="submit" class="boton-estado boton-desactivar">Desactivar</button>
+                                        </form>
+                                    {% else %}
+                                        <form action="/catalogos/toggle/eventos/{{ item.id }}" method="POST" style="display:inline;" onsubmit="guardarScrollCatalogos();">
+                                            <button type="submit" class="boton-estado boton-activar">Activar</button>
+                                        </form>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+
+        <!-- Disciplinas -->
+        <div class="seccion-catalogo">
+            <div class="seccion-header">
+                <h2>Disciplinas</h2>
+                <div class="seccion-acciones">
+                    <button type="button" class="boton-estado boton-secundario" onclick="setSeleccionGrupo('disciplinas', true)">Seleccionar todo</button>
+                    <button type="button" class="boton-estado boton-secundario" onclick="setSeleccionGrupo('disciplinas', false)">Deseleccionar todo</button>
+                    <button type="submit" form="form-disciplinas" class="boton-estado boton-desactivar" onclick="return confirmarEliminacionGrupo('disciplinas', 'elemento(s) de Disciplinas');">Borrar seleccionados</button>
+                </div>
+            </div>
+            <div class="tabla-wrap">
+                <form id="form-disciplinas" action="/catalogos/eliminar_seleccionados/disciplinas" method="POST">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="col-check"><input type="checkbox" onclick="setSeleccionGrupo('disciplinas', this.checked)"></th>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in disciplinas %}
+                            <tr>
+                                <td class="col-check"><input type="checkbox" name="ids" value="{{ item.id }}" data-group="disciplinas"></td>
+                                <td>{{ item.id }}</td>
+                                <td>{{ item.name }}</td>
+                                <td>{% if item.active == 1 %}<span class="estado-activo">Activo</span>{% else %}<span class="estado-inactivo">Inactivo</span>{% endif %}</td>
+                                <td>
+                                    <a href="/catalogos/editar/disciplinas/{{ item.id }}" class="boton-estado boton-editar">Editar</a>
+                                    <form action="/catalogos/eliminar/disciplinas/{{ item.id }}" method="POST" style="display:inline;" onsubmit="guardarScrollCatalogos(); return confirm('¿Seguro que querés eliminar este elemento?');">
+                                        <button type="submit" class="boton-estado boton-desactivar">Eliminar</button>
+                                    </form>
+                                    {% if item.active == 1 %}
+                                        <form action="/catalogos/toggle/disciplinas/{{ item.id }}" method="POST" style="display:inline;" onsubmit="guardarScrollCatalogos();">
+                                            <button type="submit" class="boton-estado boton-desactivar">Desactivar</button>
+                                        </form>
+                                    {% else %}
+                                        <form action="/catalogos/toggle/disciplinas/{{ item.id }}" method="POST" style="display:inline;" onsubmit="guardarScrollCatalogos();">
+                                            <button type="submit" class="boton-estado boton-activar">Activar</button>
+                                        </form>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+
+        <!-- Géneros -->
+        <div class="seccion-catalogo">
+            <div class="seccion-header">
+                <h2>Géneros</h2>
+                <div class="seccion-acciones">
+                    <button type="button" class="boton-estado boton-secundario" onclick="setSeleccionGrupo('generos', true)">Seleccionar todo</button>
+                    <button type="button" class="boton-estado boton-secundario" onclick="setSeleccionGrupo('generos', false)">Deseleccionar todo</button>
+                    <button type="submit" form="form-generos" class="boton-estado boton-desactivar" onclick="return confirmarEliminacionGrupo('generos', 'elemento(s) de Géneros');">Borrar seleccionados</button>
+                </div>
+            </div>
+            <div class="tabla-wrap">
+                <form id="form-generos" action="/catalogos/eliminar_seleccionados/generos" method="POST">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="col-check"><input type="checkbox" onclick="setSeleccionGrupo('generos', this.checked)"></th>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in generos %}
+                            <tr>
+                                <td class="col-check"><input type="checkbox" name="ids" value="{{ item.id }}" data-group="generos"></td>
+                                <td>{{ item.id }}</td>
+                                <td>{{ item.name }}</td>
+                                <td>{% if item.active == 1 %}<span class="estado-activo">Activo</span>{% else %}<span class="estado-inactivo">Inactivo</span>{% endif %}</td>
+                                <td>
+                                    <a href="/catalogos/editar/generos/{{ item.id }}" class="boton-estado boton-editar">Editar</a>
+                                    <form action="/catalogos/eliminar/generos/{{ item.id }}" method="POST" style="display:inline;" onsubmit="guardarScrollCatalogos(); return confirm('¿Seguro que querés eliminar este elemento?');">
+                                        <button type="submit" class="boton-estado boton-desactivar">Eliminar</button>
+                                    </form>
+                                    {% if item.active == 1 %}
+                                        <form action="/catalogos/toggle/generos/{{ item.id }}" method="POST" style="display:inline;" onsubmit="guardarScrollCatalogos();">
+                                            <button type="submit" class="boton-estado boton-desactivar">Desactivar</button>
+                                        </form>
+                                    {% else %}
+                                        <form action="/catalogos/toggle/generos/{{ item.id }}" method="POST" style="display:inline;" onsubmit="guardarScrollCatalogos();">
+                                            <button type="submit" class="boton-estado boton-activar">Activar</button>
+                                        </form>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+
+        <!-- Pruebas -->
+        <div class="seccion-catalogo">
+            <div class="seccion-header">
+                <h2>Pruebas</h2>
+                <div class="seccion-acciones">
+                    <button type="button" class="boton-estado boton-secundario" onclick="setSeleccionGrupo('pruebas', true)">Seleccionar todo</button>
+                    <button type="button" class="boton-estado boton-secundario" onclick="setSeleccionGrupo('pruebas', false)">Deseleccionar todo</button>
+                    <button type="submit" form="form-pruebas" class="boton-estado boton-desactivar" onclick="return confirmarEliminacionGrupo('pruebas', 'elemento(s) de Pruebas');">Borrar seleccionados</button>
+                </div>
+            </div>
+            <div class="tabla-wrap">
+                <form id="form-pruebas" action="/catalogos/eliminar_seleccionados/pruebas" method="POST">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="col-check"><input type="checkbox" onclick="setSeleccionGrupo('pruebas', this.checked)"></th>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in pruebas %}
+                            <tr>
+                                <td class="col-check"><input type="checkbox" name="ids" value="{{ item.id }}" data-group="pruebas"></td>
+                                <td>{{ item.id }}</td>
+                                <td>{{ item.name }}</td>
+                                <td>{% if item.active == 1 %}<span class="estado-activo">Activo</span>{% else %}<span class="estado-inactivo">Inactivo</span>{% endif %}</td>
+                                <td>
+                                    <a href="/catalogos/editar/pruebas/{{ item.id }}" class="boton-estado boton-editar">Editar</a>
+                                    <form action="/catalogos/eliminar/pruebas/{{ item.id }}" method="POST" style="display:inline;" onsubmit="guardarScrollCatalogos(); return confirm('¿Seguro que querés eliminar este elemento?');">
+                                        <button type="submit" class="boton-estado boton-desactivar">Eliminar</button>
+                                    </form>
+                                    {% if item.active == 1 %}
+                                        <form action="/catalogos/toggle/pruebas/{{ item.id }}" method="POST" style="display:inline;" onsubmit="guardarScrollCatalogos();">
+                                            <button type="submit" class="boton-estado boton-desactivar">Desactivar</button>
+                                        </form>
+                                    {% else %}
+                                        <form action="/catalogos/toggle/pruebas/{{ item.id }}" method="POST" style="display:inline;" onsubmit="guardarScrollCatalogos();">
+                                            <button type="submit" class="boton-estado boton-activar">Activar</button>
+                                        </form>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+
+        <!-- Categorías -->
+        <div class="seccion-catalogo">
+            <div class="seccion-header">
+                <h2>Categorías</h2>
+                <div class="seccion-acciones">
+                    <button type="button" class="boton-estado boton-secundario" onclick="setSeleccionGrupo('categorias', true)">Seleccionar todo</button>
+                    <button type="button" class="boton-estado boton-secundario" onclick="setSeleccionGrupo('categorias', false)">Deseleccionar todo</button>
+                    <button type="submit" form="form-categorias" class="boton-estado boton-desactivar" onclick="return confirmarEliminacionGrupo('categorias', 'elemento(s) de Categorías');">Borrar seleccionados</button>
+                </div>
+            </div>
+            <div class="tabla-wrap">
+                <form id="form-categorias" action="/catalogos/eliminar_seleccionados/categorias" method="POST">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="col-check"><input type="checkbox" onclick="setSeleccionGrupo('categorias', this.checked)"></th>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in categorias %}
+                            <tr>
+                                <td class="col-check"><input type="checkbox" name="ids" value="{{ item.id }}" data-group="categorias"></td>
+                                <td>{{ item.id }}</td>
+                                <td>{{ item.name }}</td>
+                                <td>{% if item.active == 1 %}<span class="estado-activo">Activo</span>{% else %}<span class="estado-inactivo">Inactivo</span>{% endif %}</td>
+                                <td>
+                                    <a href="/catalogos/editar/categorias/{{ item.id }}" class="boton-estado boton-editar">Editar</a>
+                                    <form action="/catalogos/eliminar/categorias/{{ item.id }}" method="POST" style="display:inline;" onsubmit="guardarScrollCatalogos(); return confirm('¿Seguro que querés eliminar este elemento?');">
+                                        <button type="submit" class="boton-estado boton-desactivar">Eliminar</button>
+                                    </form>
+                                    {% if item.active == 1 %}
+                                        <form action="/catalogos/toggle/categorias/{{ item.id }}" method="POST" style="display:inline;" onsubmit="guardarScrollCatalogos();">
+                                            <button type="submit" class="boton-estado boton-desactivar">Desactivar</button>
+                                        </form>
+                                    {% else %}
+                                        <form action="/catalogos/toggle/categorias/{{ item.id }}" method="POST" style="display:inline;" onsubmit="guardarScrollCatalogos();">
+                                            <button type="submit" class="boton-estado boton-activar">Activar</button>
+                                        </form>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+
+        <!-- Clases -->
+        <div class="seccion-catalogo">
+            <div class="seccion-header">
+                <h2>Clases</h2>
+                <div class="seccion-acciones">
+                    <button type="button" class="boton-estado boton-secundario" onclick="setSeleccionGrupo('clases', true)">Seleccionar todo</button>
+                    <button type="button" class="boton-estado boton-secundario" onclick="setSeleccionGrupo('clases', false)">Deseleccionar todo</button>
+                    <button type="submit" form="form-clases" class="boton-estado boton-desactivar" onclick="return confirmarEliminacionGrupo('clases', 'elemento(s) de Clases');">Borrar seleccionados</button>
+                </div>
+            </div>
+            <div class="tabla-wrap">
+                <form id="form-clases" action="/catalogos/eliminar_seleccionados/clases" method="POST">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="col-check"><input type="checkbox" onclick="setSeleccionGrupo('clases', this.checked)"></th>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in clases %}
+                            <tr>
+                                <td class="col-check"><input type="checkbox" name="ids" value="{{ item.id }}" data-group="clases"></td>
+                                <td>{{ item.id }}</td>
+                                <td>{{ item.name }}</td>
+                                <td>{% if item.active == 1 %}<span class="estado-activo">Activo</span>{% else %}<span class="estado-inactivo">Inactivo</span>{% endif %}</td>
+                                <td>
+                                    <a href="/catalogos/editar/clases/{{ item.id }}" class="boton-estado boton-editar">Editar</a>
+                                    <form action="/catalogos/eliminar/clases/{{ item.id }}" method="POST" style="display:inline;" onsubmit="guardarScrollCatalogos(); return confirm('¿Seguro que querés eliminar este elemento?');">
+                                        <button type="submit" class="boton-estado boton-desactivar">Eliminar</button>
+                                    </form>
+                                    {% if item.active == 1 %}
+                                        <form action="/catalogos/toggle/clases/{{ item.id }}" method="POST" style="display:inline;" onsubmit="guardarScrollCatalogos();">
+                                            <button type="submit" class="boton-estado boton-desactivar">Desactivar</button>
+                                        </form>
+                                    {% else %}
+                                        <form action="/catalogos/toggle/clases/{{ item.id }}" method="POST" style="display:inline;" onsubmit="guardarScrollCatalogos();">
+                                            <button type="submit" class="boton-estado boton-activar">Activar</button>
+                                        </form>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+
+        <!-- Provincias -->
+        <div class="seccion-catalogo">
+            <div class="seccion-header">
+                <h2>Provincias</h2>
+                <div class="seccion-acciones">
+                    <button type="button" class="boton-estado boton-secundario" onclick="setSeleccionGrupo('provincias', true)">Seleccionar todo</button>
+                    <button type="button" class="boton-estado boton-secundario" onclick="setSeleccionGrupo('provincias', false)">Deseleccionar todo</button>
+                    <button type="submit" form="form-provincias" class="boton-estado boton-desactivar" onclick="return confirmarEliminacionGrupo('provincias', 'elemento(s) de Provincias');">Borrar seleccionados</button>
+                </div>
+            </div>
+            <div class="tabla-wrap">
+                <form id="form-provincias" action="/catalogos/eliminar_seleccionados/provincias" method="POST">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="col-check"><input type="checkbox" onclick="setSeleccionGrupo('provincias', this.checked)"></th>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in provincias %}
+                            <tr>
+                                <td class="col-check"><input type="checkbox" name="ids" value="{{ item.id }}" data-group="provincias"></td>
+                                <td>{{ item.id }}</td>
+                                <td>{{ item.name }}</td>
+                                <td>{% if item.active == 1 %}<span class="estado-activo">Activo</span>{% else %}<span class="estado-inactivo">Inactivo</span>{% endif %}</td>
+                                <td>
+                                    <a href="/catalogos/editar/provincias/{{ item.id }}" class="boton-estado boton-editar">Editar</a>
+                                    <form action="/catalogos/eliminar/provincias/{{ item.id }}" method="POST" style="display:inline;" onsubmit="guardarScrollCatalogos(); return confirm('¿Seguro que querés eliminar este elemento?');">
+                                        <button type="submit" class="boton-estado boton-desactivar">Eliminar</button>
+                                    </form>
+                                    {% if item.active == 1 %}
+                                        <form action="/catalogos/toggle/provincias/{{ item.id }}" method="POST" style="display:inline;" onsubmit="guardarScrollCatalogos();">
+                                            <button type="submit" class="boton-estado boton-desactivar">Desactivar</button>
+                                        </form>
+                                    {% else %}
+                                        <form action="/catalogos/toggle/provincias/{{ item.id }}" method="POST" style="display:inline;" onsubmit="guardarScrollCatalogos();">
+                                            <button type="submit" class="boton-estado boton-activar">Activar</button>
+                                        </form>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+
+        <!-- Relación Evento → Disciplina -->
+        <div class="seccion-catalogo">
+            <div class="seccion-header">
+                <h2>Relación Evento → Disciplina</h2>
+                <div class="seccion-acciones">
+                    <button type="button" class="boton-estado boton-secundario" onclick="setSeleccionGrupo('rel_evento_disciplina', true)">Seleccionar todo</button>
+                    <button type="button" class="boton-estado boton-secundario" onclick="setSeleccionGrupo('rel_evento_disciplina', false)">Deseleccionar todo</button>
+                    <button type="submit" form="form-rel-evento-disciplina" class="boton-estado boton-desactivar" onclick="return confirmarEliminacionGrupo('rel_evento_disciplina', 'relación(es) Evento → Disciplina');">Borrar seleccionados</button>
+                </div>
+            </div>
+
+                       <div class="form-relacion-catalogo">
+                <form action="/catalogos/relacion/evento-disciplina/agregar" method="POST">
+                    <div class="form-relacion-grid">
+                        <div>
+                            <label for="evento_relacion">Evento</label>
+                            <select id="evento_relacion" name="evento" required>
+                                <option value="">Seleccionar</option>
+                                {% for item in eventos_activos %}
+                                    <option value="{{ item['name'] }}">{{ item['name'] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="disciplina_relacion">Disciplina</label>
+                            <select id="disciplina_relacion" name="disciplina" required>
+                                <option value="">Seleccionar</option>
+                                {% for item in disciplinas_activas %}
+                                    <option value="{{ item['name'] }}">{{ item['name'] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div>
+                            <button type="submit" class="boton-relacion">Agregar relación</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="form-catalogo" style="margin-top: 12px;">
+                <form action="/catalogos/relacion/evento-disciplina/importar_csv" method="POST" enctype="multipart/form-data">
+                    <div class="form-grid">
+                        <div>
+                            <label for="archivo_csv_relacion_evento_disciplina">Importar relaciones Evento → Disciplina (CSV)</label>
+                            <input type="file" id="archivo_csv_relacion_evento_disciplina" name="archivo_csv_relacion_evento_disciplina" accept=".csv" required>
+                        </div>
+
+                        <div>
+                            <button type="submit" class="boton-importar-catalogo">Importar CSV</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="tabla-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="col-check"><input type="checkbox" onclick="setSeleccionGrupo('rel_evento_disciplina', this.checked)"></th>
+                            <th>ID</th>
+                            <th>Evento</th>
+                            <th>Disciplina</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if relaciones_evento_disciplina %}
+                            {% for item in relaciones_evento_disciplina %}
+                            <tr>
+                                <td class="col-check"><input type="checkbox" name="ids" value="{{ item.id }}" data-group="rel_evento_disciplina" form="form-rel-evento-disciplina"></td>
+                                <td>{{ item.id }}</td>
+                                <td>{{ item.evento }}</td>
+                                <td>{{ item.disciplina }}</td>
+                                <td>
+                                    <form action="/catalogos/relacion/evento-disciplina/eliminar/{{ item.id }}" method="POST" style="display:inline;" onsubmit="guardarScrollCatalogos(); return confirm('¿Seguro que querés eliminar esta relación?');">
+                                        <button type="submit" class="boton-estado boton-desactivar">Eliminar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="5">Todavía no hay relaciones cargadas.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+                <form id="form-rel-evento-disciplina" action="/catalogos/relacion/evento-disciplina/eliminar_seleccionadas" method="POST"></form>
+            </div>
+        </div>
+
+        <!-- Relación Disciplina → Prueba -->
+        <div class="seccion-catalogo">
+            <div class="seccion-header">
+                <h2>Relación Disciplina → Prueba</h2>
+                <div class="seccion-acciones">
+                    <button type="button" class="boton-estado boton-secundario" onclick="setSeleccionGrupo('rel_disciplina_prueba', true)">Seleccionar todo</button>
+                    <button type="button" class="boton-estado boton-secundario" onclick="setSeleccionGrupo('rel_disciplina_prueba', false)">Deseleccionar todo</button>
+                    <button type="submit" form="form-rel-disciplina-prueba" class="boton-estado boton-desactivar" onclick="return confirmarEliminacionGrupo('rel_disciplina_prueba', 'relación(es) Disciplina → Prueba');">Borrar seleccionados</button>
+                </div>
+            </div>
+
+            <div class="form-relacion-catalogo">
+                <form action="/catalogos/relacion/disciplina-prueba/agregar" method="POST">
+                    <div class="form-relacion-grid">
+                        <div>
+                            <label for="disciplina_relacion_prueba">Disciplina</label>
+                            <select id="disciplina_relacion_prueba" name="disciplina" required>
+                                <option value="">Seleccionar</option>
+                                {% for item in disciplinas_activas %}
+                                    <option value="{{ item['name'] }}">{{ item['name'] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="prueba_relacion">Prueba</label>
+                            <select id="prueba_relacion" name="prueba" required>
+                                <option value="">Seleccionar</option>
+                                {% for item in pruebas_activas %}
+                                    <option value="{{ item['name'] }}">{{ item['name'] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div>
+                            <button type="submit" class="boton-relacion">Agregar relación</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+<div class="form-catalogo" style="margin-top: 12px;">
+    <form action="/catalogos/relacion/disciplina-prueba/importar_csv" method="POST" enctype="multipart/form-data">
+        <div class="form-grid">
+            <div>
+                <label for="archivo_csv_relacion_disciplina_prueba">
+                    Importar relaciones Disciplina → Prueba (CSV)
+                </label>
+                <input
+                    type="file"
+                    id="archivo_csv_relacion_disciplina_prueba"
+                    name="archivo_csv_relacion_disciplina_prueba"
+                    accept=".csv"
+                    required
+                >
+            </div>
+
+            <div>
+                <button type="submit" class="boton-importar-catalogo">
+                    Importar CSV
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+            <div class="tabla-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="col-check"><input type="checkbox" onclick="setSeleccionGrupo('rel_disciplina_prueba', this.checked)"></th>
+                            <th>ID</th>
+                            <th>Disciplina</th>
+                            <th>Prueba</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if relaciones_disciplina_prueba %}
+                            {% for item in relaciones_disciplina_prueba %}
+                            <tr>
+                                <td class="col-check"><input type="checkbox" name="ids" value="{{ item.id }}" data-group="rel_disciplina_prueba" form="form-rel-disciplina-prueba"></td>
+                                <td>{{ item.id }}</td>
+                                <td>{{ item.disciplina }}</td>
+                                <td>{{ item.prueba }}</td>
+                                <td>
+                                    <form action="/catalogos/relacion/disciplina-prueba/eliminar/{{ item.id }}" method="POST" style="display:inline;" onsubmit="guardarScrollCatalogos(); return confirm('¿Seguro que querés eliminar esta relación?');">
+                                        <button type="submit" class="boton-estado boton-desactivar">Eliminar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="5">Todavía no hay relaciones cargadas.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+                <form id="form-rel-disciplina-prueba" action="/catalogos/relacion/disciplina-prueba/eliminar_seleccionadas" method="POST"></form>
+            </div>
+        </div>
+    </div>
+        <!-- Relación Disciplina → Prueba → Género -->
+        <div class="seccion-catalogo">
+            <div class="seccion-header">
+                <h2>Relación Disciplina → Prueba → Género</h2>
+            </div>
+
+            <div class="form-relacion-catalogo">
+                <form action="/catalogos/relacion/disciplina-prueba-genero/agregar" method="POST">
+                    <div class="form-relacion-grid">
+                        <div>
+                            <label for="disciplina_relacion_prueba_genero">Disciplina</label>
+                            <select id="disciplina_relacion_prueba_genero" name="disciplina" required>
+                                <option value="">Seleccionar</option>
+                                {% for item in disciplinas_activas %}
+                                    <option value="{{ item['name'] }}">{{ item['name'] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="prueba_relacion_genero">Prueba</label>
+                            <select id="prueba_relacion_genero" name="prueba" required>
+                                <option value="">Seleccionar</option>
+                                {% for item in pruebas_activas %}
+                                    <option value="{{ item['name'] }}">{{ item['name'] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="genero_relacion_prueba">Género</label>
+                            <select id="genero_relacion_prueba" name="genero" required>
+                                <option value="">Seleccionar</option>
+                                {% for item in generos_activos %}
+                                    <option value="{{ item['name'] }}">{{ item['name'] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div>
+                            <button type="submit" class="boton-relacion">Agregar relación</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="tabla-wrap">
+                <table>
+                    <thead>
+<tr>
+    <th>ID</th>
+    <th>Disciplina</th>
+    <th>Prueba</th>
+    <th>Género</th>
+    <th>Acciones</th>
+</tr>
+                    </thead>
+                    <tbody>
+                        {% if relaciones_disciplina_prueba_genero %}
+                            {% for item in relaciones_disciplina_prueba_genero %}
+<tr>
+    <td>{{ item.id }}</td>
+    <td>{{ item.disciplina }}</td>
+    <td>{{ item.prueba }}</td>
+    <td>{{ item.genero }}</td>
+    <td>
+        <form action="/catalogos/relacion/disciplina-prueba-genero/eliminar/{{ item.id }}" method="POST" style="display:inline;" onsubmit="guardarScrollCatalogos(); return confirm('¿Seguro que querés eliminar esta relación?');">
+            <button type="submit" class="boton-estado boton-desactivar">Eliminar</button>
+        </form>
+    </td>
+</tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="4">Todavía no hay relaciones Disciplina → Prueba → Género cargadas.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    <script>
+        function setSeleccionGrupo(grupo, checked) {
+            const checks = document.querySelectorAll('input[type="checkbox"][data-group="' + grupo + '"]');
+            checks.forEach(function (check) {
+                check.checked = checked;
+            });
+        }
+
+        function cantidadSeleccionadosGrupo(grupo) {
+            return document.querySelectorAll('input[type="checkbox"][data-group="' + grupo + '"]:checked').length;
+        }
+
+        function guardarScrollCatalogos() {
+            sessionStorage.setItem("catalogosScrollY", String(window.scrollY));
+        }
+
+        function confirmarEliminacionGrupo(grupo, texto) {
+            const cantidad = cantidadSeleccionadosGrupo(grupo);
+
+            if (cantidad === 0) {
+                alert("No seleccionaste ningún elemento.");
+                return false;
+            }
+
+            const ok = confirm("¿Seguro que querés eliminar " + cantidad + " " + texto + "?");
+
+            if (ok) {
+                guardarScrollCatalogos();
+            }
+
+            return ok;
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const selectCatalogo = document.getElementById("tipo_catalogo");
+            const inputNuevoValor = document.getElementById("nombre_nuevo");
+            const formAltaCatalogo = document.querySelector('form[action="/catalogos/agregar"]');
+
+            const formImportarCatalogo = document.querySelector('form[action="/catalogos/importar_csv"]');
+            const selectCatalogoImportar = document.getElementById("tipo_catalogo_csv");
+
+            const formRelacionEventoDisciplina = document.querySelector('form[action="/catalogos/relacion/evento-disciplina/agregar"]');
+            const eventoRelacionSelect = document.getElementById("evento_relacion");
+
+            const formRelacionDisciplinaPrueba = document.querySelector('form[action="/catalogos/relacion/disciplina-prueba/agregar"]');
+            const disciplinaRelacionPruebaSelect = document.getElementById("disciplina_relacion_prueba");
+
+            const scrollGuardado = sessionStorage.getItem("catalogosScrollY");
+            if (scrollGuardado !== null) {
+                setTimeout(function () {
+                    window.scrollTo(0, parseInt(scrollGuardado, 10));
+                }, 50);
+                sessionStorage.removeItem("catalogosScrollY");
+            }
+
+            if (selectCatalogo && inputNuevoValor && formAltaCatalogo) {
+                const valorGuardado = sessionStorage.getItem("catalogoSeleccionado");
+
+                if (valorGuardado) {
+                    selectCatalogo.value = valorGuardado;
+                }
+
+                selectCatalogo.addEventListener("change", function () {
+                    sessionStorage.setItem("catalogoSeleccionado", selectCatalogo.value);
+                });
+
+                formAltaCatalogo.addEventListener("submit", function () {
+                    sessionStorage.setItem("catalogoSeleccionado", selectCatalogo.value);
+                    sessionStorage.setItem("reenfocarNuevoValor", "1");
+                    guardarScrollCatalogos();
+                });
+
+                function enfocarInputNuevoValor() {
+                    inputNuevoValor.focus();
+                    inputNuevoValor.select();
+                }
+
+                if (sessionStorage.getItem("reenfocarNuevoValor") === "1") {
+                    setTimeout(enfocarInputNuevoValor, 50);
+                    setTimeout(enfocarInputNuevoValor, 200);
+                    setTimeout(enfocarInputNuevoValor, 500);
+                    sessionStorage.removeItem("reenfocarNuevoValor");
+                }
+            }
+
+            if (selectCatalogoImportar) {
+                const valorImportarGuardado = sessionStorage.getItem("catalogoImportarSeleccionado");
+                if (valorImportarGuardado) {
+                    selectCatalogoImportar.value = valorImportarGuardado;
+                }
+
+                selectCatalogoImportar.addEventListener("change", function () {
+                    sessionStorage.setItem("catalogoImportarSeleccionado", selectCatalogoImportar.value);
+                });
+            }
+
+            if (formImportarCatalogo && selectCatalogoImportar) {
+                formImportarCatalogo.addEventListener("submit", function () {
+                    sessionStorage.setItem("catalogoImportarSeleccionado", selectCatalogoImportar.value);
+                    guardarScrollCatalogos();
+                });
+            }
+
+            if (eventoRelacionSelect) {
+                const eventoRelacionGuardado = sessionStorage.getItem("eventoRelacionSeleccionado");
+                if (eventoRelacionGuardado) {
+                    eventoRelacionSelect.value = eventoRelacionGuardado;
+                }
+
+                eventoRelacionSelect.addEventListener("change", function () {
+                    sessionStorage.setItem("eventoRelacionSeleccionado", eventoRelacionSelect.value);
+                });
+            }
+
+            if (formRelacionEventoDisciplina && eventoRelacionSelect) {
+                formRelacionEventoDisciplina.addEventListener("submit", function () {
+                    sessionStorage.setItem("eventoRelacionSeleccionado", eventoRelacionSelect.value);
+                    guardarScrollCatalogos();
+                });
+            }
+
+            if (disciplinaRelacionPruebaSelect) {
+                const disciplinaRelacionPruebaGuardada = sessionStorage.getItem("disciplinaRelacionPruebaSeleccionada");
+                if (disciplinaRelacionPruebaGuardada) {
+                    disciplinaRelacionPruebaSelect.value = disciplinaRelacionPruebaGuardada;
+                }
+
+                disciplinaRelacionPruebaSelect.addEventListener("change", function () {
+                    sessionStorage.setItem("disciplinaRelacionPruebaSeleccionada", disciplinaRelacionPruebaSelect.value);
+                });
+            }
+
+            if (formRelacionDisciplinaPrueba && disciplinaRelacionPruebaSelect) {
+                formRelacionDisciplinaPrueba.addEventListener("submit", function () {
+                    sessionStorage.setItem("disciplinaRelacionPruebaSeleccionada", disciplinaRelacionPruebaSelect.value);
+                    guardarScrollCatalogos();
+                });
+            }
+
+            const formsCatalogos = document.querySelectorAll("form");
+            formsCatalogos.forEach(function (form) {
+                form.addEventListener("submit", function () {
+                    guardarScrollCatalogos();
+                });
+            });
+
+            const linksCatalogos = document.querySelectorAll('a[href^="/catalogos/editar/"], a[href="/catalogos"]');
+            linksCatalogos.forEach(function (link) {
+                link.addEventListener("click", function () {
+                    guardarScrollCatalogos();
+                });
+            });
+        });
+    </script>
+</body>
+</html>

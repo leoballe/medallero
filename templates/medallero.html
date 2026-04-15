@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medallero</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        .contenedor {
+            max-width: 1200px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #1f3c88;
+        }
+
+        h2 {
+            color: #1f3c88;
+        }
+
+        p {
+            color: #555;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input, select {
+            padding: 10px;
+            border: 1px solid #cfcfcf;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        th, td {
+            border: 1px solid #d9d9d9;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background: #f0f4fa;
+            color: #1f3c88;
+        }
+
+        .sin-registros {
+            margin-top: 15px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .filtros-box {
+            margin-top: 15px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #f8fafc;
+            border: 1px solid #dfe6ee;
+            border-radius: 8px;
+        }
+
+        .filtros-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(220px, 1fr));
+            gap: 16px;
+            align-items: end;
+        }
+
+        .campo {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filtros-acciones {
+            margin-top: 18px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .boton {
+            display: inline-block;
+            background: #1f3c88;
+            color: white;
+            text-decoration: none;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .boton:hover {
+            background: #16306d;
+        }
+
+        .boton-secundario {
+            display: inline-block;
+            background: #6c757d;
+            color: white;
+            text-decoration: none;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .boton-secundario:hover {
+            background: #5a6268;
+        }
+
+        .barra-acciones-superior {
+            margin: 20px auto 0 auto;
+            max-width: 1200px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .flash {
+            margin: 15px auto 20px auto;
+            max-width: 1200px;
+            padding: 12px 14px;
+            background: #fff3cd;
+            border: 1px solid #ffe69c;
+            color: #664d03;
+            border-radius: 6px;
+        }
+
+        @media (max-width: 900px) {
+            .filtros-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="flash">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<div class="barra-acciones-superior">
+    <a href="/" class="boton-secundario">Volver al inicio</a>
+</div>
+
+<div class="contenedor">
+    <h1>Medallero</h1>
+    <p>Tabla general de medallas según los filtros seleccionados.</p>
+
+    <div class="filtros-box">
+        <form action="/medallero" method="GET">
+            <div class="filtros-grid">
+                <div class="campo">
+                    <label for="filtro_q">Buscar</label>
+                    <input
+                        type="text"
+                        id="filtro_q"
+                        name="q"
+                        placeholder="Buscar texto..."
+                        value="{{ filtros.q }}"
+                    >
+                </div>
+
+                <div class="campo">
+                    <label for="evento">Evento</label>
+                    <select id="evento" name="evento">
+                        <option value="">Todos</option>
+                        {% for item in eventos %}
+                            <option value="{{ item['name'] }}" {% if filtros.evento == item['name'] %}selected{% endif %}>{{ item['name'] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="disciplina">Disciplina</label>
+                    <select id="disciplina" name="disciplina">
+                        <option value="">Todas</option>
+                        {% for item in disciplinas %}
+                            <option value="{{ item['name'] }}" {% if filtros.disciplina == item['name'] %}selected{% endif %}>{{ item['name'] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="filtro_genero">Género</label>
+                    <select id="filtro_genero" name="genero">
+                        <option value="">Todos</option>
+                        {% for item in generos %}
+                            <option value="{{ item['name'] }}" {% if filtros.genero == item['name'] %}selected{% endif %}>{{ item['name'] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="filtro_categoria">Categoría</label>
+                    <select id="filtro_categoria" name="categoria">
+                        <option value="">Todas</option>
+                        {% for item in categorias %}
+                            <option value="{{ item['name'] }}" {% if filtros.categoria == item['name'] %}selected{% endif %}>{{ item['name'] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="filtro_provincia">Provincia</label>
+                    <select id="filtro_provincia" name="provincia">
+                        <option value="">Todas</option>
+                        {% for item in provincias %}
+                            <option value="{{ item['name'] }}" {% if filtros.provincia == item['name'] %}selected{% endif %}>{{ item['name'] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="filtro_medalla">Medalla</label>
+                    <select id="filtro_medalla" name="medalla">
+                        <option value="">Todas</option>
+                        <option value="oro" {% if filtros.medalla == 'oro' %}selected{% endif %}>Oro</option>
+                        <option value="plata" {% if filtros.medalla == 'plata' %}selected{% endif %}>Plata</option>
+                        <option value="bronce" {% if filtros.medalla == 'bronce' %}selected{% endif %}>Bronce</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="filtros-acciones">
+                <button type="submit" class="boton">Filtrar</button>
+                <a href="/medallero" class="boton-secundario">Limpiar filtros</a>
+            </div>
+        </form>
+    </div>
+
+    {% if medallero %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Pos.</th>
+                    <th>Provincia</th>
+                    <th>Oro</th>
+                    <th>Plata</th>
+                    <th>Bronce</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fila in medallero %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ fila.provincia }}</td>
+                    <td>{{ fila.oros }}</td>
+                    <td>{{ fila.platas }}</td>
+                    <td>{{ fila.bronces }}</td>
+                    <td>{{ fila.total }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="sin-registros">No hay datos de medallero para los filtros seleccionados.</div>
+    {% endif %}
+</div>
+
+<script>
+    const RELACIONES_EVENTO_DISCIPLINA = {{ relaciones_evento_disciplina | tojson }};
+
+    function inicializarFiltroEventoDisciplinaMedallero() {
+        const eventoSelect = document.getElementById("evento");
+        const disciplinaSelect = document.getElementById("disciplina");
+
+        if (!eventoSelect || !disciplinaSelect) {
+            return;
+        }
+
+        const disciplinasOriginales = Array.from(disciplinaSelect.options).map(opt => ({
+            value: opt.value,
+            text: opt.textContent
+        }));
+
+        function reconstruirDisciplinas() {
+            const eventoSeleccionado = eventoSelect.value;
+            const valorActualDisciplina = disciplinaSelect.value;
+
+            disciplinaSelect.innerHTML = "";
+
+            const optionDefault = document.createElement("option");
+            optionDefault.value = "";
+            optionDefault.textContent = "Todas";
+            disciplinaSelect.appendChild(optionDefault);
+
+            if (!eventoSeleccionado) {
+                disciplinasOriginales.forEach(opt => {
+                    if (opt.value !== "") {
+                        const nuevaOpcion = document.createElement("option");
+                        nuevaOpcion.value = opt.value;
+                        nuevaOpcion.textContent = opt.text;
+                        if (opt.value === valorActualDisciplina) {
+                            nuevaOpcion.selected = true;
+                        }
+                        disciplinaSelect.appendChild(nuevaOpcion);
+                    }
+                });
+                return;
+            }
+
+            const disciplinasPermitidas = RELACIONES_EVENTO_DISCIPLINA
+                .filter(rel => rel.evento === eventoSeleccionado)
+                .map(rel => rel.disciplina);
+
+            disciplinasOriginales.forEach(opt => {
+                if (opt.value !== "" && disciplinasPermitidas.includes(opt.value)) {
+                    const nuevaOpcion = document.createElement("option");
+                    nuevaOpcion.value = opt.value;
+                    nuevaOpcion.textContent = opt.text;
+                    if (opt.value === valorActualDisciplina) {
+                        nuevaOpcion.selected = true;
+                    }
+                    disciplinaSelect.appendChild(nuevaOpcion);
+                }
+            });
+
+            const sigueExistiendo = Array.from(disciplinaSelect.options).some(
+                opt => opt.value === valorActualDisciplina
+            );
+
+            if (!sigueExistiendo) {
+                disciplinaSelect.value = "";
+            }
+        }
+
+        eventoSelect.addEventListener("change", reconstruirDisciplinas);
+        reconstruirDisciplinas();
+    }
+
+    document.addEventListener("DOMContentLoaded", inicializarFiltroEventoDisciplinaMedallero);
+</script>
+</body>
+</html>
